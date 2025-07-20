@@ -11,6 +11,16 @@ export default function Users() {
         getUsers();
     }, [])
 
+    const onDelete = (u) => {
+        if (!window.confirm("Are you sure to delete this?")) {
+            return;
+        }
+        axiosClient.delete(`/users/${u.id}`).then(() => {
+            //TODO show notification
+            getUsers()
+        })
+    }
+
     const getUsers = () => {
         setLoading(true)
         axiosClient.get('/users')
@@ -39,7 +49,15 @@ export default function Users() {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                {loading &&<tbody>
+                    <tr>
+                        <td colSpan="5" className="text-center">
+                            Loading...
+                        </td>
+                    </tr>
+                </tbody>
+}
+                {!loading &&<tbody>
                     {users.map(u => {
                         return (
                         <tr>
@@ -50,12 +68,13 @@ export default function Users() {
                             <td>
                                 <Link to={'/users/'+u.id} className="btn-edit">Edit</Link>
                                 &nbsp;
-                                <button className="btn-delete">Delete</button>
+                                <button onClick={ev => onDelete(u)} className="btn-delete">Delete</button>
                             </td>
                         </tr>
                         )
                     })}
                 </tbody>
+}
             </table>
         </div>
         </div>
